@@ -7,11 +7,15 @@ pipeline {
                 echo 'Memulai tahap Build: Membuat virtual environment dan menginstal dependensi Python...'
 
                 // Buat virtual environment
-                sh 'python3 -m venv venv'
+                sh 'python -m venv venv'
 
-                // Aktifkan dan install dependensi
+                // Aktifkan dan install dependensi (Windows/Linux otomatis cek path)
                 sh '''
-                    . venv/bin/activate
+                    if [ -f "venv/Scripts/activate" ]; then
+                        . venv/Scripts/activate
+                    else
+                        . venv/bin/activate
+                    fi
                     pip install --upgrade pip
                     pip install -r requirements.txt
                 '''
@@ -25,8 +29,12 @@ pipeline {
                 echo 'Memulai tahap Test: Menjalankan aplikasi Python utama...'
 
                 sh '''
-                    . venv/bin/activate
-                    python3 main.py
+                    if [ -f "venv/Scripts/activate" ]; then
+                        . venv/Scripts/activate
+                    else
+                        . venv/bin/activate
+                    fi
+                    python main.py
                 '''
 
                 echo 'Tahap Test selesai.'
