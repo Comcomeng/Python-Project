@@ -1,21 +1,19 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10'
+        }
+    }
 
     stages {
         stage('Build') {
             steps {
                 echo 'Memulai tahap Build: Membuat virtual environment dan menginstal dependensi Python...'
 
-                // Buat virtual environment
                 sh 'python -m venv venv'
 
-                // Aktifkan dan install dependensi (Windows/Linux otomatis cek path)
                 sh '''
-                    if [ -f "venv/Scripts/activate" ]; then
-                        . venv/Scripts/activate
-                    else
-                        . venv/bin/activate
-                    fi
+                    . venv/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
                 '''
@@ -29,11 +27,7 @@ pipeline {
                 echo 'Memulai tahap Test: Menjalankan aplikasi Python utama...'
 
                 sh '''
-                    if [ -f "venv/Scripts/activate" ]; then
-                        . venv/Scripts/activate
-                    else
-                        . venv/bin/activate
-                    fi
+                    . venv/bin/activate
                     python main.py
                 '''
 
